@@ -1,17 +1,13 @@
-use std::fs::File;
-use std::io::{self, BufRead};
 use std::cmp::max;
 
 pub fn star1(filename: &str) {
-    let file = File::open(filename).unwrap();
     let mut max_value = 0;
     let mut total = 0;
-    for line in io::BufReader::new(file).lines() {
-        let content = line.unwrap();
-        if content.is_empty() {
+    for line in super::utils::read_lines(&filename) {
+        if line.is_empty() {
             total = 0;
         } else {
-            total += content.parse::<i32>().unwrap();
+            total += line.parse::<i32>().unwrap();
         }
         max_value = max(max_value, total);
     }
@@ -19,16 +15,14 @@ pub fn star1(filename: &str) {
 }
 
 pub fn star2(filename: &str) {
-    let file = File::open(filename).unwrap();
     let mut totals = Vec::new();
     let mut total = 0;
-    for line in io::BufReader::new(file).lines() {
-        let content = line.unwrap();
-        if content.is_empty() {
+    for line in super::utils::read_lines(&filename) {
+        if line.is_empty() {
             totals.push(total);
             total = 0;
         } else {
-            total += content.parse::<i32>().unwrap();
+            total += line.parse::<i32>().unwrap();
         }
     }
     if total > 0 {
