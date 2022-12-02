@@ -1,15 +1,8 @@
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::env;
 use std::cmp::max;
 
-fn main() {
-    let filename = env::args().nth(1).unwrap();
-    star1(&filename);
-    star2(&filename);
-}
-
-fn star1(filename: &str) {
+pub fn star1(filename: &str) {
     let file = File::open(filename).unwrap();
     let mut max_value = 0;
     let mut total = 0;
@@ -25,7 +18,7 @@ fn star1(filename: &str) {
     println!("Star 1: {}", max_value); 
 }
 
-fn star2(filename: &str) {
+pub fn star2(filename: &str) {
     let file = File::open(filename).unwrap();
     let mut totals = Vec::new();
     let mut total = 0;
@@ -46,5 +39,3 @@ fn star2(filename: &str) {
     let result: i32 = totals[..3].iter().sum();
     println!("Star 2: {}", result);
 }
-
-
