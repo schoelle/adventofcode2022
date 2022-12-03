@@ -54,5 +54,5 @@ pub fn star2(filename: &str) {
             }
         }
     }
-    println!("Star 1: {}", total);
+    println!("Star 2: {}", total);
 }
