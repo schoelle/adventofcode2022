@@ -2,6 +2,7 @@ mod utils;
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 use std::env;
 
@@ -15,6 +16,8 @@ fn main() {
         "2.2" => day02::star2(&filename.unwrap_or("inputs/day02.txt".to_string())),
         "3.1" => day03::star1(&filename.unwrap_or("inputs/day03.txt".to_string())),
         "3.2" => day03::star2(&filename.unwrap_or("inputs/day03.txt".to_string())),
+        "4.1" => day04::star1(&filename.unwrap_or("inputs/day04.txt".to_string())),
+        "4.2" => day04::star2(&filename.unwrap_or("inputs/day04.txt".to_string())),
         _ => println!("Part {} not available, expected '2.1' or similar.", day)
     }
 }
