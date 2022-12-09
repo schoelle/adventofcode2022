@@ -5,11 +5,6 @@ use std::collections::HashSet;
 struct Loc {x: i32, y: i32}
 
 impl Loc {
-    
-    pub fn new() -> Self {
-        Self {x: 0, y: 0}
-    }
-
     pub fn step(&mut self, dir: &str) {
         match dir {
             "U" => self.y += 1,
@@ -32,7 +27,7 @@ impl Loc {
 pub fn compute_steps(filename: &str, length: usize) -> usize {
     let lines = super::utils::read_lines(&filename);
     let re = Regex::new(r"^([UDLR]) (\d+)$").unwrap();
-    let mut rope = vec![Loc::new(); length];
+    let mut rope = vec![Loc { x: 0, y: 0 }; length];
     let mut visited = HashSet::new();
     for line in lines {
         if let Some(cap) = re.captures(&line) {
