@@ -4,10 +4,10 @@ use std::cmp::max;
 fn is_visible(arr: &Array2D<u32>, x: usize, y: usize) -> bool {
     let mysize = arr[(y,x)];
     return
-        !(0..x).any(|xp| arr[(y,xp)] >= mysize) ||
-        !(x+1..arr.num_columns()).any(|xp| arr[(y,xp)] >= mysize) ||
-        !(0..y).any(|yp| arr[(yp,x)] >= mysize) ||
-        !(y+1..arr.num_rows()).any(|yp| arr[(yp,x)] >= mysize);
+        (0..x).all(|xp| arr[(y,xp)] < mysize) ||
+        (x+1..arr.num_columns()).all(|xp| arr[(y,xp)] < mysize) ||
+        (0..y).all(|yp| arr[(yp,x)] < mysize) ||
+        (y+1..arr.num_rows()).all(|yp| arr[(yp,x)] < mysize);
 }
 
 fn count_visible(arr: &Array2D<u32>) -> usize {
