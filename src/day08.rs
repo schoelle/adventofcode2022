@@ -3,11 +3,11 @@ use std::cmp::max;
 
 fn is_visible(arr: &Array2D<u32>, x: usize, y: usize) -> bool {
     let mysize = &arr[(y,x)];
-    let west_blocked = (0..x).any(|xp| &arr[(y,xp)] >= &mysize);
-    let east_blocked = (x+1..arr.num_columns()).any(|xp| &arr[(y,xp)] >= &mysize);
-    let north_blocked = (0..y).any(|yp| &arr[(yp,x)] >= &mysize);
-    let south_blocked = (y+1..arr.num_rows()).any(|yp| &arr[(yp,x)] >= &mysize);
-    return !(west_blocked && east_blocked && north_blocked && south_blocked);
+    return
+        !(0..x).any(|xp| &arr[(y,xp)] >= &mysize) ||
+        !(x+1..arr.num_columns()).any(|xp| &arr[(y,xp)] >= &mysize) ||
+        !(0..y).any(|yp| &arr[(yp,x)] >= &mysize) ||
+        !(y+1..arr.num_rows()).any(|yp| &arr[(yp,x)] >= &mysize);
 }
 
 fn count_visible(arr: &Array2D<u32>) -> usize {
@@ -19,30 +19,15 @@ fn count_visible(arr: &Array2D<u32>) -> usize {
 }
 
 fn view_score(arr: &Array2D<u32>, x: usize, y: usize) -> usize {
+    if x == 0 || y == 0 || x == arr.num_columns() - 1 || y == arr.num_rows() -1 {
+        return 0; // Score on border is always 0
+    }
     let mysize = &arr[(y,x)];
-    let mut res = 1;
-    // There would have been a much more elegant way if usize could be negative ...
-    if let Some(west_view) = (0..x).rev().position(|xp| &arr[(y,xp)] >= &mysize) {
-        res *= west_view+1;
-    } else {
-        res *= x;
-    }
-    if let Some(east_view) = (x+1..arr.num_columns()).position(|xp| &arr[(y,xp)] >= &mysize) {
-        res *= east_view+1;
-    } else {
-        res *= arr.num_columns()-x-1;
-    }
-    if let Some(north_view) = (0..y).rev().position(|yp| &arr[(yp,x)] >= &mysize) {
-        res *= north_view+1;
-    } else {
-        res *= y;
-    }
-    if let Some(south_view) = (y+1..arr.num_rows()).position(|yp| &arr[(yp,x)] >= &mysize) {
-        res *= south_view+1;
-    } else {
-        res *= arr.num_rows()-y-1;
-    }
-    return res;
+    let west_view = (0..x).rev().position(|xp| &arr[(y,xp)] >= &mysize).unwrap_or(x-1)+1;
+    let east_view = (x+1..arr.num_columns()).position(|xp| &arr[(y,xp)] >= &mysize).unwrap_or(arr.num_columns()-x-2)+1;
+    let north_view = (0..y).rev().position(|yp| &arr[(yp,x)] >= &mysize).unwrap_or(y-1)+1;
+    let south_view = (y+1..arr.num_rows()).position(|yp| &arr[(yp,x)] >= &mysize).unwrap_or(arr.num_rows()-y-2)+1;
+    return west_view * east_view * north_view * south_view;
 }
 
 fn best_view_score(arr: &Array2D<u32>) -> usize {
@@ -62,7 +47,7 @@ fn read_forest(filename: &str) -> Array2D<u32> {
 
 pub fn star1(filename: &str) {
     let forest = read_forest(filename);
-    println!("{:?}", count_visible(&forest)); 
+    println!("Star 1: {}", count_visible(&forest)); 
 }
 
 pub fn star2(filename: &str) {
