@@ -12,10 +12,10 @@ impl Loc {
 
     pub fn step(&mut self, dir: &str) {
         match dir {
-            "U" => *self = Self { x: self.x, y: self.y + 1 },
-            "D" => *self = Self { x: self.x, y: self.y - 1 },
-            "R" => *self = Self { x: self.x + 1, y: self.y },
-            "L" => *self = Self { x: self.x - 1, y: self.y },
+            "U" => self.y += 1,
+            "D" => self.y -= 1,
+            "R" => self.x += 1,
+            "L" => self.x -= 1,
             &_ => panic!()
         }
     }
@@ -29,43 +29,31 @@ impl Loc {
     }
 }
 
-pub fn star1(filename: &str) {
+pub fn compute_steps(filename: &str, length: usize) -> usize {
     let lines = super::utils::read_lines(&filename);
     let re = Regex::new(r"^([UDLR]) (\d+)$").unwrap();
-    let mut head = Loc::new();
-    let mut tail = Loc::new();
+    let mut rope = vec![Loc::new(); length];
     let mut visited = HashSet::new();
     for line in lines {
         if let Some(cap) = re.captures(&line) {
             for _ in 0..cap[2].parse::<u32>().unwrap() {
-                head.step(&cap[1]);
-                tail.move_towards(&head);
-                visited.insert(tail.clone());
-            }
-        }
-    }
-    println!("Star 1: {}", visited.len());
-}
-
-pub fn star2(filename: &str) {
-    let lines = super::utils::read_lines(&filename);
-    let re = Regex::new(r"^([UDLR]) (\d+)$").unwrap();
-    let mut rope = vec![Loc::new(); 10];
-    let mut visited = HashSet::new();
-    for line in lines {
-        if let Some(cap) = re.captures(&line) {
-            for _ in 0..cap[2].parse::<u32>().unwrap() {
-                let mut head = rope[0].clone();
-                head.step(&cap[1]);
-                rope[0] = head;
-                for i in 1..10 {
+                rope[0].step(&cap[1]);
+                for i in 1..length {
                     let mut part = rope[i].clone();
                     part.move_towards(&rope[i-1]);
                     rope[i] = part;
                 }
-                visited.insert(rope[9].clone());
+                visited.insert(rope[length-1].clone());
             }
         }
     }
-    println!("Star 2: {}", visited.len());
+    return visited.len();
+}
+
+pub fn star1(filename: &str) {
+    println!("Star 1: {}", compute_steps(filename, 2));
+}
+
+pub fn star2(filename: &str) {
+    println!("Star 2: {}", compute_steps(filename, 10));
 }
