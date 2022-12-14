@@ -5,13 +5,11 @@ fn cmp(left: &JsonValue, right: &JsonValue) -> Ordering {
     if left.is_number() && right.is_number() {
         return left.as_i32().unwrap().cmp(&right.as_i32().unwrap());
     } else if left.is_array() && right.is_array() {
-        let mut i = 0;
-        while i < min(left.len(), right.len()) {
+        for i in 0..min(left.len(), right.len()) {
             let value_cmp = cmp(&left[i], &right[i]);
             if value_cmp != Ordering::Equal {
                 return value_cmp;
             }
-            i += 1;
         }
         return left.len().cmp(&right.len());
     } else if left.is_number() {
