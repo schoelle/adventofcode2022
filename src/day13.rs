@@ -1,24 +1,23 @@
 use json::{JsonValue, array};
+use json::JsonValue::{Number, Array};
 use std::cmp::{Ordering, min};
 
 fn cmp(left: &JsonValue, right: &JsonValue) -> Ordering {
-    if left.is_number() && right.is_number() {
-        return left.as_i32().unwrap().cmp(&right.as_i32().unwrap());
-    } else if left.is_array() && right.is_array() {
-        for i in 0..min(left.len(), right.len()) {
-            let value_cmp = cmp(&left[i], &right[i]);
-            if value_cmp != Ordering::Equal {
-                return value_cmp;
+    match (left, right) {
+        (Number(_), Array(_)) => cmp(&array!(left.as_i32()), &right),
+        (Array(_), Number(_)) => cmp(&left, &array!(right.as_i32())),
+        (Number(_), Number(_)) => left.as_i32().unwrap().cmp(&right.as_i32().unwrap()),
+        (Array(_), Array(_)) => {
+            for i in 0..min(left.len(), right.len()) {
+                let value_cmp = cmp(&left[i], &right[i]);
+                if value_cmp != Ordering::Equal {
+                    return value_cmp;
+                }
             }
-        }
-        return left.len().cmp(&right.len());
-    } else if left.is_number() {
-        return cmp(&array!(left.as_i32()), &right);
-    } else if right.is_number() {
-        return cmp(&left, &array!(right.as_i32()));
+            return left.len().cmp(&right.len());
+        },
+        _ => panic!("Illegal JSON content")
     }
-    
-    return Ordering::Equal;
 }
 
 pub fn star1(filename: &str) {
