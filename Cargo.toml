@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 regex = "1"
 array2d = "0"
+json = "0.12.4"
