@@ -75,26 +75,36 @@ fn solve(curr: State, maze: &Maze, cache: &mut HashMap<State, i32>) -> i32 {
     if let Some(v) = cache.get(&curr) {
         return *v;
     }
+    if curr.workers.is_empty() {
+        return 0;
+    }
     let mut best = 0;
-    for w in 0..curr.workers.len() {
-        let worker = &curr.workers[w];
-        for next in curr.available.iter() {
-            let new_available = curr.available.iter().filter(|x| *x != next).map(|x| *x).collect::<Vec<usize>>();
-            let time_left = worker.0 - maze.dist[(worker.1, *next)];       
-            if time_left < 0 {
-                continue;
-            }
-            let mut workers = curr.workers.clone();
-            workers[w] = Worker(time_left, *next);
-            workers.sort();
-            let a_try = State {
-                available: new_available,
-                workers: workers
-            };
-            let result = solve(a_try, maze, cache) + (time_left * maze.rate[next]);
-            if best < result {
-                best = result;
-            }
+    let worker = &curr.workers[0];
+    for next in curr.available.iter() {
+        let new_available = curr.available.iter().filter(|x| *x != next).map(|x| *x).collect::<Vec<usize>>();
+        let time_left = worker.0 - maze.dist[(worker.1, *next)];       
+        if time_left < 0 {
+            continue;
+        }
+        let mut workers = curr.workers.clone();
+        workers[0] = Worker(time_left, *next);
+        let a_try = State {
+            available: new_available,
+            workers: workers
+        };
+        let result = solve(a_try, maze, cache) + (time_left * maze.rate[next]);
+        if best < result {
+            best = result;
+        }
+    }
+    if curr.workers.len() > 1 {
+        let new_workers = curr.workers[1..].to_vec();
+        let result = solve(State {
+            available: curr.available.clone(),
+            workers: new_workers
+        }, maze, cache);
+        if best < result {
+            best = result;
         }
     }
     cache.insert(curr, best);
