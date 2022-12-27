@@ -21,7 +21,6 @@ pub fn star1(filename: &str) {
     let mut total = 0;
     for line in super::utils::read_lines(filename) {
         let decoded = decode(&line);
-        println!("{} -> {}", line, decoded);
         total += decoded;
     }
     println!("Star 1: {}", encode(total));
